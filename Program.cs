@@ -1,14 +1,18 @@
 using CoiffeurBuddy.Data;
+using CoiffeurBuddy.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var conStrDbSeguranca = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-	options.UseSqlServer(connectionString));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+	options.UseSqlServer(conStrDbSeguranca));
+
+var conStrDbPrincipal = builder.Configuration.GetConnectionString("Conexao") ?? throw new InvalidOperationException("Connection string 'Conexao' not found.");
+builder.Services.AddDbContext<Contexto>(options =>
+	options.UseSqlServer(conStrDbPrincipal));
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
 	.AddEntityFrameworkStores<ApplicationDbContext>();
