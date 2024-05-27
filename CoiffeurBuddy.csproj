@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-CoiffeurBuddy-793364f4-67bc-46c2-9b81-042121f6ed8e</UserSecretsId>
   </PropertyGroup>
