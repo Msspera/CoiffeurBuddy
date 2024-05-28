@@ -21,7 +21,7 @@ namespace CoiffeurBuddy.Controllers
         // GET: Atendimentos
         public async Task<IActionResult> Index()
         {
-            var contexto = _context.Atendimento.Include(a => a.Cliente).Include(a => a.Funcionario).Include(a => a.Servico);
+            var contexto = _context.Atendimentos.Include(a => a.Cliente).Include(a => a.Funcionario).Include(a => a.Servico);
             return View(await contexto.ToListAsync());
         }
 
@@ -33,7 +33,7 @@ namespace CoiffeurBuddy.Controllers
                 return NotFound();
             }
 
-            var atendimento = await _context.Atendimento
+            var atendimento = await _context.Atendimentos
                 .Include(a => a.Cliente)
                 .Include(a => a.Funcionario)
                 .Include(a => a.Servico)
@@ -82,7 +82,7 @@ namespace CoiffeurBuddy.Controllers
                 return NotFound();
             }
 
-            var atendimento = await _context.Atendimento.FindAsync(id);
+            var atendimento = await _context.Atendimentos.FindAsync(id);
             if (atendimento == null)
             {
                 return NotFound();
@@ -139,7 +139,7 @@ namespace CoiffeurBuddy.Controllers
                 return NotFound();
             }
 
-            var atendimento = await _context.Atendimento
+            var atendimento = await _context.Atendimentos
                 .Include(a => a.Cliente)
                 .Include(a => a.Funcionario)
                 .Include(a => a.Servico)
@@ -157,10 +157,10 @@ namespace CoiffeurBuddy.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var atendimento = await _context.Atendimento.FindAsync(id);
+            var atendimento = await _context.Atendimentos.FindAsync(id);
             if (atendimento != null)
             {
-                _context.Atendimento.Remove(atendimento);
+                _context.Atendimentos.Remove(atendimento);
             }
 
             await _context.SaveChangesAsync();
@@ -169,7 +169,7 @@ namespace CoiffeurBuddy.Controllers
 
         private bool AtendimentoExists(int id)
         {
-            return _context.Atendimento.Any(e => e.Id == id);
+            return _context.Atendimentos.Any(e => e.Id == id);
         }
     }
 }
