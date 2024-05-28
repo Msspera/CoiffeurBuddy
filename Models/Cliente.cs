@@ -32,7 +32,7 @@ namespace CoiffeurBuddy.Models
 		[Required]
 		public DateOnly Nascimento { get; set; }
 
-		[InverseProperty("Atendimento")]
+		[InverseProperty("Cliente")]
 		public List<Atendimento> Atendimentos { get; set; }
 
 		

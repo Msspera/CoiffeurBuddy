@@ -32,7 +32,7 @@ namespace CoiffeurBuddy.Models
 		[Required]
 		public float Salario { get; set; }
 
-		[InverseProperty("Atendimento")]
+		[InverseProperty("Funcionario")]
 		public List<Atendimento> Atendimentos { get; set; }
 	}
 }
