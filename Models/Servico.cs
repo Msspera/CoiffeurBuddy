@@ -14,5 +14,8 @@ namespace CoiffeurBuddy.Models
 		public string Descricao	{ get; set; }
 		[Required]
 		public float Valor {  get; set; }
+
+		[InverseProperty("Atendimento")]
+		public List<Atendimento> Atendimentos { get; set; }
 	}
 }
