@@ -49,8 +49,8 @@ namespace CoiffeurBuddy.Controllers
         // GET: Atendimentos/Create
         public IActionResult Create()
         {
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Celular");
-            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Id", "Celular");
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nome");
+            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Id", "Nome");
             ViewData["ServicoId"] = new SelectList(_context.Servicos, "Id", "Descricao");
             return View();
         }
@@ -68,9 +68,9 @@ namespace CoiffeurBuddy.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Celular", atendimento.ClienteId);
-            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Id", "Celular", atendimento.FuncionarioId);
-            ViewData["ServicoId"] = new SelectList(_context.Servicos, "Id", "Descricao", atendimento.ServicoId);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nome", atendimento.Cliente.Nome);
+            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Id", "Nome", atendimento.Funcionario.Nome);
+            ViewData["ServicoId"] = new SelectList(_context.Servicos, "Id", "Descricao", atendimento.Servico.Descricao);
             return View(atendimento);
         }
 
@@ -87,8 +87,8 @@ namespace CoiffeurBuddy.Controllers
             {
                 return NotFound();
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Celular", atendimento.ClienteId);
-            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Id", "Celular", atendimento.FuncionarioId);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nome", atendimento.ClienteId);
+            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Id", "Nome", atendimento.FuncionarioId);
             ViewData["ServicoId"] = new SelectList(_context.Servicos, "Id", "Descricao", atendimento.ServicoId);
             return View(atendimento);
         }
@@ -125,8 +125,8 @@ namespace CoiffeurBuddy.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Celular", atendimento.ClienteId);
-            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Id", "Celular", atendimento.FuncionarioId);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Id", "Nome", atendimento.ClienteId);
+            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Id", "Nome", atendimento.FuncionarioId);
             ViewData["ServicoId"] = new SelectList(_context.Servicos, "Id", "Descricao", atendimento.ServicoId);
             return View(atendimento);
         }
