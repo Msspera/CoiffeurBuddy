@@ -141,7 +141,7 @@ namespace CoiffeurBuddy.Controllers
 			ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id", comanda.AtendimentoId);
 			ViewData["Produtos"] = produtos;
 
-			var editComandaViewModel = new EditComandaViewModel
+			var editComandaViewModel = new ComandaViewModel
 			{
 				Id = comanda.Id,
 				AtendimentoId = comanda.AtendimentoId,
@@ -162,7 +162,7 @@ namespace CoiffeurBuddy.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, EditComandaViewModel comandaViewModel)
+        public async Task<IActionResult> Edit(int id, ComandaViewModel comandaViewModel)
         {
 			if (id != comandaViewModel.Id)
 			{

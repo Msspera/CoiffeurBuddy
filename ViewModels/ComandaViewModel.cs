@@ -1,6 +1,6 @@
 ﻿namespace CoiffeurBuddy.ViewModels
 {
-	public class EditComandaViewModel
+	public class ComandaViewModel
 	{
 		public int Id { get; set; }
 		public int AtendimentoId { get; set; }
