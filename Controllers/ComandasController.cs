@@ -129,13 +129,32 @@ namespace CoiffeurBuddy.Controllers
                 return NotFound();
             }
 
-            var comanda = await _context.Comandas.FindAsync(id);
-            if (comanda == null)
+            var comanda = await _context.Comandas
+								.Include(c => c.ComandaProdutos)
+								.ThenInclude(cp => cp.Produto)
+								.FirstOrDefaultAsync(m => m.Id == id);
+			if (comanda == null)
             {
                 return NotFound();
             }
-            ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id", comanda.AtendimentoId);
-            return View(comanda);
+			var produtos = await _context.Produtos.ToListAsync();
+			ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id", comanda.AtendimentoId);
+			ViewData["Produtos"] = produtos;
+
+			var editComandaViewModel = new EditComandaViewModel
+			{
+				Id = comanda.Id,
+				AtendimentoId = comanda.AtendimentoId,
+				ValorTotal = comanda.ValorTotal,
+				MetodoPagamento = comanda.MetodoPagamento,
+				ComandaProdutos = produtos.Select(p => new ComandaProdutoViewModel
+				{
+					ProdutoId = p.Id,
+					Quantidade = comanda.ComandaProdutos.FirstOrDefault(cp => cp.ProdutoId == p.Id)?.Quantidade ?? 0
+				}).ToList()
+			};
+
+			return View(editComandaViewModel);
         }
 
         // POST: Comandas/Edit/5
@@ -143,23 +162,58 @@ namespace CoiffeurBuddy.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,AtendimentoId,ValorTotal,MetodoPagamento")] Comanda comanda)
+        public async Task<IActionResult> Edit(int id, EditComandaViewModel comandaViewModel)
         {
-            if (id != comanda.Id)
-            {
-                return NotFound();
-            }
+			if (id != comandaViewModel.Id)
+			{
+				return NotFound();
+			}
 
-            if (ModelState.IsValid)
+			if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(comanda);
-                    await _context.SaveChangesAsync();
-                }
+					var comanda = await _context.Comandas
+					.Include(c => c.ComandaProdutos)
+					.FirstOrDefaultAsync(m => m.Id == id);
+
+					var comandaProdutos = comandaViewModel.ComandaProdutos;
+
+					int AtendimentoId = comandaViewModel.AtendimentoId;
+					comanda.AtendimentoId = AtendimentoId;
+					
+					float valorAtendimento = ObterValorAtendimento(AtendimentoId);
+					float gastoProdutos = CalcularTotalGastoProdutos(comandaProdutos);
+					float ValorTotal = valorAtendimento + gastoProdutos;
+
+					comanda.ValorTotal = ValorTotal;
+					comanda.MetodoPagamento = comandaViewModel.MetodoPagamento;
+
+					foreach (var cp in comandaViewModel.ComandaProdutos)
+					{
+						var comandaProduto = comanda.ComandaProdutos.FirstOrDefault(p => p.ProdutoId == cp.ProdutoId);
+						if (comandaProduto != null)
+						{
+							comandaProduto.Quantidade = cp.Quantidade;
+						}
+						else
+						{
+							comanda.ComandaProdutos.Add(new Models.ComandaProduto
+							{
+								ComandaId = comanda.Id,
+								ProdutoId = cp.ProdutoId,
+								Quantidade = cp.Quantidade
+							});
+						}
+					}
+					
+
+					_context.Update(comanda);
+					await _context.SaveChangesAsync();
+				}
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ComandaExists(comanda.Id))
+                    if (!ComandaExists(comandaViewModel.Id))
                     {
                         return NotFound();
                     }
@@ -170,8 +224,8 @@ namespace CoiffeurBuddy.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id", comanda.AtendimentoId);
-            return View(comanda);
+            ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id", comandaViewModel.AtendimentoId);
+            return View(comandaViewModel);
         }
 
         // GET: Comandas/Delete/5
