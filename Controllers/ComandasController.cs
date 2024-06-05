@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CoiffeurBuddy.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using CoiffeurBuddy.ViewModels;
 
 namespace CoiffeurBuddy.Controllers
 {
@@ -48,7 +50,8 @@ namespace CoiffeurBuddy.Controllers
         public IActionResult Create()
         {
             ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id");
-            return View();
+			ViewData["Produtos"] = _context.Produtos.ToList();
+			return View();
         }
 
         // POST: Comandas/Create
@@ -56,20 +59,70 @@ namespace CoiffeurBuddy.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,AtendimentoId,ValorTotal,MetodoPagamento")] Comanda comanda)
+        public async Task<IActionResult> Create(int AtendimentoId, char MetodoPagamento, List<ComandaProdutoViewModel> comandaProdutos)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(comanda);
-                await _context.SaveChangesAsync();
+				float valorAtendimento = ObterValorAtendimento(AtendimentoId);
+				float gastoProdutos = CalcularTotalGastoProdutos(comandaProdutos);
+				float ValorTotal = valorAtendimento + gastoProdutos;
+				
+				var comanda = new Comanda
+				{
+					AtendimentoId = AtendimentoId,
+					ValorTotal = ValorTotal,
+					MetodoPagamento = MetodoPagamento,
+					ComandaProdutos = comandaProdutos
+					.Where(cp => cp.Quantidade > 0)
+					.Select(cp => new ComandaProduto
+					{
+						ProdutoId = cp.ProdutoId,
+						Quantidade = cp.Quantidade
+					}).ToList()
+				};
+				_context.Add(comanda);
+				await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id", comanda.AtendimentoId);
-            return View(comanda);
+			// ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id", comanda.AtendimentoId);
+			//ViewData["Produtos"] = _context.Produtos.ToList();
+			return View();
         }
+		private float ObterValorAtendimento(int atendimentoId)
+		{
+			// Consulta o atendimento no banco de dados pelo ID fornecido
+			var atendimento = _context.Atendimentos
+									 .AsNoTracking() // AsNoTracking() evita que o Entity Framework rastreie as entidades retornadas pela consulta
+									 .FirstOrDefault(a => a.Id == atendimentoId);
 
-        // GET: Comandas/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+			// Verifica se o atendimento foi encontrado
+			if (atendimento != null)
+			{
+				var servico = _context.Servicos
+								.AsNoTracking()
+								.FirstOrDefault(s => s.Id == atendimento.ServicoId);
+				// Retorna o valor do atendimento encontrado
+				return servico.Valor; 
+			}
+			else
+			{
+				return 0; // Valor padrão caso o atendimento não seja encontrado
+			}
+		}
+		private float CalcularTotalGastoProdutos(List<ComandaProdutoViewModel> comandaProdutos)
+		{
+			float total = 0;
+			foreach (var cp in comandaProdutos)
+			{
+				Produto produto = _context.Produtos
+									.AsNoTracking()
+									.FirstOrDefault(p => p.Id == cp.ProdutoId);
+				total += produto.Valor * cp.Quantidade;
+			}
+			return total;
+		}
+		// GET: Comandas/Edit/5
+		public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
