@@ -18,6 +18,6 @@ namespace CoiffeurBuddy.Models
 		[Required]
 		public char MetodoPagamento { get; set; }
 
-		public List<Produto> Produtos { get; set; }
+		public ICollection<ComandaProduto> ComandaProdutos { get; set; }
 	}
 }

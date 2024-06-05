@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CoiffeurBuddy.Migrations.ContextoMigrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20240528163004_AtendimentoTeste")]
-    partial class AtendimentoTeste
+    [Migration("20240605031757_ComandaProduto")]
+    partial class ComandaProduto
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -96,6 +96,49 @@ namespace CoiffeurBuddy.Migrations.ContextoMigrations
                     b.ToTable("Clientes");
                 });
 
+            modelBuilder.Entity("CoiffeurBuddy.Models.Comanda", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AtendimentoId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MetodoPagamento")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1)");
+
+                    b.Property<float>("ValorTotal")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AtendimentoId");
+
+                    b.ToTable("Comandas");
+                });
+
+            modelBuilder.Entity("CoiffeurBuddy.Models.ComandaProduto", b =>
+                {
+                    b.Property<int>("ComandaId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProdutoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantidade")
+                        .HasColumnType("int");
+
+                    b.HasKey("ComandaId", "ProdutoId");
+
+                    b.HasIndex("ProdutoId");
+
+                    b.ToTable("ComandaProdutos");
+                });
+
             modelBuilder.Entity("CoiffeurBuddy.Models.Funcionario", b =>
                 {
                     b.Property<int>("Id")
@@ -137,6 +180,30 @@ namespace CoiffeurBuddy.Migrations.ContextoMigrations
                     b.ToTable("Funcionarios");
                 });
 
+            modelBuilder.Entity("CoiffeurBuddy.Models.Produto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<int>("Estoque")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Valor")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Produtos");
+                });
+
             modelBuilder.Entity("CoiffeurBuddy.Models.Servico", b =>
                 {
                     b.Property<int>("Id")
@@ -161,19 +228,19 @@ namespace CoiffeurBuddy.Migrations.ContextoMigrations
             modelBuilder.Entity("CoiffeurBuddy.Models.Atendimento", b =>
                 {
                     b.HasOne("CoiffeurBuddy.Models.Cliente", "Cliente")
-                        .WithMany()
+                        .WithMany("Atendimentos")
                         .HasForeignKey("ClienteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CoiffeurBuddy.Models.Funcionario", "Funcionario")
-                        .WithMany()
+                        .WithMany("Atendimentos")
                         .HasForeignKey("FuncionarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CoiffeurBuddy.Models.Servico", "Servico")
-                        .WithMany()
+                        .WithMany("Atendimentos")
                         .HasForeignKey("ServicoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -183,6 +250,61 @@ namespace CoiffeurBuddy.Migrations.ContextoMigrations
                     b.Navigation("Funcionario");
 
                     b.Navigation("Servico");
+                });
+
+            modelBuilder.Entity("CoiffeurBuddy.Models.Comanda", b =>
+                {
+                    b.HasOne("CoiffeurBuddy.Models.Atendimento", "Atendimento")
+                        .WithMany()
+                        .HasForeignKey("AtendimentoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Atendimento");
+                });
+
+            modelBuilder.Entity("CoiffeurBuddy.Models.ComandaProduto", b =>
+                {
+                    b.HasOne("CoiffeurBuddy.Models.Comanda", "Comanda")
+                        .WithMany("ComandaProdutos")
+                        .HasForeignKey("ComandaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CoiffeurBuddy.Models.Produto", "Produto")
+                        .WithMany("ComandaProdutos")
+                        .HasForeignKey("ProdutoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Comanda");
+
+                    b.Navigation("Produto");
+                });
+
+            modelBuilder.Entity("CoiffeurBuddy.Models.Cliente", b =>
+                {
+                    b.Navigation("Atendimentos");
+                });
+
+            modelBuilder.Entity("CoiffeurBuddy.Models.Comanda", b =>
+                {
+                    b.Navigation("ComandaProdutos");
+                });
+
+            modelBuilder.Entity("CoiffeurBuddy.Models.Funcionario", b =>
+                {
+                    b.Navigation("Atendimentos");
+                });
+
+            modelBuilder.Entity("CoiffeurBuddy.Models.Produto", b =>
+                {
+                    b.Navigation("ComandaProdutos");
+                });
+
+            modelBuilder.Entity("CoiffeurBuddy.Models.Servico", b =>
+                {
+                    b.Navigation("Atendimentos");
                 });
 #pragma warning restore 612, 618
         }

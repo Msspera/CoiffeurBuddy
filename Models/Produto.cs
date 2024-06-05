@@ -11,7 +11,13 @@ namespace CoiffeurBuddy.Models
 		[StringLength(120)]
 		public string Descricao { get; set; }
 
-		public List<Comanda> Comandas { get; set; }
+		[Required]
+		public float Valor { get; set; }
+
+		[Required]
+        public int Estoque { get; set; }
+
+		public ICollection<ComandaProduto> ComandaProdutos { get; set; }
 
 	}
 }

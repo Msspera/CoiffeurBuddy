@@ -118,6 +118,24 @@ namespace CoiffeurBuddy.Migrations.ContextoMigrations
                     b.ToTable("Comandas");
                 });
 
+            modelBuilder.Entity("CoiffeurBuddy.Models.ComandaProduto", b =>
+                {
+                    b.Property<int>("ComandaId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProdutoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantidade")
+                        .HasColumnType("int");
+
+                    b.HasKey("ComandaId", "ProdutoId");
+
+                    b.HasIndex("ProdutoId");
+
+                    b.ToTable("ComandaProdutos");
+                });
+
             modelBuilder.Entity("CoiffeurBuddy.Models.Funcionario", b =>
                 {
                     b.Property<int>("Id")
@@ -172,6 +190,12 @@ namespace CoiffeurBuddy.Migrations.ContextoMigrations
                         .HasMaxLength(120)
                         .HasColumnType("nvarchar(120)");
 
+                    b.Property<int>("Estoque")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Valor")
+                        .HasColumnType("real");
+
                     b.HasKey("Id");
 
                     b.ToTable("Produtos");
@@ -196,21 +220,6 @@ namespace CoiffeurBuddy.Migrations.ContextoMigrations
                     b.HasKey("Id");
 
                     b.ToTable("Servicos");
-                });
-
-            modelBuilder.Entity("ComandaProduto", b =>
-                {
-                    b.Property<int>("ComandasId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProdutosId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ComandasId", "ProdutosId");
-
-                    b.HasIndex("ProdutosId");
-
-                    b.ToTable("ComandaProduto");
                 });
 
             modelBuilder.Entity("CoiffeurBuddy.Models.Atendimento", b =>
@@ -251,19 +260,23 @@ namespace CoiffeurBuddy.Migrations.ContextoMigrations
                     b.Navigation("Atendimento");
                 });
 
-            modelBuilder.Entity("ComandaProduto", b =>
+            modelBuilder.Entity("CoiffeurBuddy.Models.ComandaProduto", b =>
                 {
-                    b.HasOne("CoiffeurBuddy.Models.Comanda", null)
-                        .WithMany()
-                        .HasForeignKey("ComandasId")
+                    b.HasOne("CoiffeurBuddy.Models.Comanda", "Comanda")
+                        .WithMany("ComandaProdutos")
+                        .HasForeignKey("ComandaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CoiffeurBuddy.Models.Produto", null)
-                        .WithMany()
-                        .HasForeignKey("ProdutosId")
+                    b.HasOne("CoiffeurBuddy.Models.Produto", "Produto")
+                        .WithMany("ComandaProdutos")
+                        .HasForeignKey("ProdutoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Comanda");
+
+                    b.Navigation("Produto");
                 });
 
             modelBuilder.Entity("CoiffeurBuddy.Models.Cliente", b =>
@@ -271,9 +284,19 @@ namespace CoiffeurBuddy.Migrations.ContextoMigrations
                     b.Navigation("Atendimentos");
                 });
 
+            modelBuilder.Entity("CoiffeurBuddy.Models.Comanda", b =>
+                {
+                    b.Navigation("ComandaProdutos");
+                });
+
             modelBuilder.Entity("CoiffeurBuddy.Models.Funcionario", b =>
                 {
                     b.Navigation("Atendimentos");
+                });
+
+            modelBuilder.Entity("CoiffeurBuddy.Models.Produto", b =>
+                {
+                    b.Navigation("ComandaProdutos");
                 });
 
             modelBuilder.Entity("CoiffeurBuddy.Models.Servico", b =>
