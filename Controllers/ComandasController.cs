@@ -141,7 +141,7 @@ namespace CoiffeurBuddy.Controllers
 			ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id", comanda.AtendimentoId);
 			ViewData["Produtos"] = produtos;
 
-			var editComandaViewModel = new ComandaViewModel
+			var comandaViewModel = new ComandaViewModel
 			{
 				Id = comanda.Id,
 				AtendimentoId = comanda.AtendimentoId,
@@ -154,7 +154,7 @@ namespace CoiffeurBuddy.Controllers
 				}).ToList()
 			};
 
-			return View(editComandaViewModel);
+			return View(comandaViewModel);
         }
 
         // POST: Comandas/Edit/5
