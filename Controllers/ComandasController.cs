@@ -35,15 +35,32 @@ namespace CoiffeurBuddy.Controllers
                 return NotFound();
             }
 
-            var comanda = await _context.Comandas
-                .Include(c => c.Atendimento)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (comanda == null)
-            {
-                return NotFound();
-            }
+			var comanda = await _context.Comandas
+								.Include(c => c.ComandaProdutos)
+								.ThenInclude(cp => cp.Produto)
+								.FirstOrDefaultAsync(m => m.Id == id);
+			if (comanda == null)
+			{
+				return NotFound();
+			}
+			var produtos = await _context.Produtos.ToListAsync();
+			ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id", comanda.AtendimentoId);
+			ViewData["Produtos"] = produtos;
 
-            return View(comanda);
+			var comandaViewModel = new ComandaViewModel
+			{
+				Id = comanda.Id,
+				AtendimentoId = comanda.AtendimentoId,
+				ValorTotal = comanda.ValorTotal,
+				MetodoPagamento = comanda.MetodoPagamento,
+				ComandaProdutos = produtos.Select(p => new ComandaProdutoViewModel
+				{
+					ProdutoId = p.Id,
+					Quantidade = comanda.ComandaProdutos.FirstOrDefault(cp => cp.ProdutoId == p.Id)?.Quantidade ?? 0
+				}).ToList()
+			};
+
+			return View(comandaViewModel);
         }
 
         // GET: Comandas/Create

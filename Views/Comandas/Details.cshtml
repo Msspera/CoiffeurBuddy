@@ -1,20 +1,21 @@
-﻿@model CoiffeurBuddy.Models.Comanda
+﻿@model CoiffeurBuddy.ViewModels.ComandaViewModel
 
 @{
     ViewData["Title"] = "Details";
+	var produtos = ViewBag.Produtos as List<Produto>;
 }
 
 <h1>Details</h1>
-
+<br />
 <div>
     <h4>Comanda</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Atendimento)
+            Atendimento
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Atendimento.Id)
+            @Html.DisplayFor(model => model.AtendimentoId)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.ValorTotal)
@@ -29,6 +30,27 @@
             @Html.DisplayFor(model => model.MetodoPagamento)
         </dd>
     </dl>
+	@if (Model.ComandaProdutos.Count > 0)
+	{
+		<h4>Produtos Consumidos:</h4>
+		<hr />
+		<dl class="row">
+			@for (int i = 0; i < produtos.Count; i++)
+			{
+				if (Model.ComandaProdutos[i].Quantidade > 0)
+				{
+					<dt class="col-sm-2">
+						@produtos[i].Descricao (@produtos[i].Valor)
+					</dt>
+					<dd class="col-sm-10">
+						@Model.ComandaProdutos[i].Quantidade unidades
+					</dd>
+				}
+
+			}
+		</dl>
+	}
+	
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
