@@ -24,7 +24,7 @@ namespace CoiffeurBuddy.Controllers
 		}
 		public IActionResult Clientes(string buscacli)
 		{
-			var ListaCliente = _context.Clientes.Include(cli => cli.Nome).
+			var filtrocliente = _context.Clientes.Include(cli=> cli.Nome).
 										   Include(cli => cli.Celular).
 										   Include(cli => cli.Email).
 										   Include(cli => cli.Endereco).
@@ -34,7 +34,7 @@ namespace CoiffeurBuddy.Controllers
 										   ToList();
 
 
-			return View(ListaCliente);
+			return View(filtrocliente);
 		}
 
 		// GET: Clientes
