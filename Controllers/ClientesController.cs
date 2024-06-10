@@ -24,17 +24,38 @@ namespace CoiffeurBuddy.Controllers
 		}
 		public IActionResult Clientes(string buscacli)
 		{
-			var filtrocliente = _context.Clientes.Include(cli=> cli.Nome).
-										   Include(cli => cli.Celular).
-										   Include(cli => cli.Email).
-										   Include(cli => cli.Endereco).
-										   Include(cli => cli.Sexo).
-										   Include(cli => cli.Nascimento).
-										   Where(o => o.Nome == buscacli).
-										   ToList();
+			IEnumerable<Cliente> clientes = new List<Cliente>();
+			if (buscacli == null)
+			{
+				clientes = from item in _context.Clientes.ToList()
+				select new Cliente
+				{
+					Nome = item.Nome,
+					Celular = item.Celular,
+					Email = item.Email,
+					Sexo = item.Sexo,
+					Endereco = item.Endereco,
+					Nascimento = item.Nascimento,
+				};
+			}
+			else
+			{
+				clientes = from item in _context.Clientes.
+										   Where(o => o.Nome.Contains(buscacli)).
+										   ToList()
+				select new Cliente
+				{
+					Nome = item.Nome,
+					Celular = item.Celular,
+					Email = item.Email,
+					Sexo = item.Sexo,
+					Endereco = item.Endereco,
+					Nascimento = item.Nascimento
+				};
+			}
 
 
-			return View(filtrocliente);
+			return View(clientes);
 		}
 
 		// GET: Clientes
