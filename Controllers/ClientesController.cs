@@ -18,8 +18,27 @@ namespace CoiffeurBuddy.Controllers
             _context = context;
         }
 
-        // GET: Clientes
-        public async Task<IActionResult> Index()
+		public IActionResult FiltrarCliente()
+		{
+			return View();
+		}
+		public IActionResult Clientes(string buscacli)
+		{
+			var ListaCliente = _context.Clientes.Include(cli => cli.Nome).
+										   Include(cli => cli.Celular).
+										   Include(cli => cli.Email).
+										   Include(cli => cli.Endereco).
+										   Include(cli => cli.Sexo).
+										   Include(cli => cli.Nascimento).
+										   Where(o => o.Nome == buscacli).
+										   ToList();
+
+
+			return View(ListaCliente);
+		}
+
+		// GET: Clientes
+		public async Task<IActionResult> Index()
         {
             return View(await _context.Clientes.ToListAsync());
         }
