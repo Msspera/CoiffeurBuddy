@@ -18,6 +18,18 @@
 </div>
 
 <div class="col-md-4">
+	<form asp-action="FiltrarPorServico">
+		<div class="form-group">
+			<label class="col-form-label">Filtrar Atendimentos por Descrição do Serviço</label>
+			<input type="text" class="form-control" name="filtro">
+		</div>
+		<div class="form-group">
+			<input type="submit" value="Filtrar" class="btn btn-primary">
+		</div>
+	</form>
+</div>
+
+<div class="col-md-4">
 	<form asp-action="FiltrarPorData">
 		<div class="form-group">
 			<label class="col-form-label">Filtrar Atendimentos por Data</label>

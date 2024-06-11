@@ -65,6 +65,45 @@ namespace CoiffeurBuddy.Controllers
 			return View(atendimentos);
 		}
 
+		public IActionResult FiltrarPorServico(string filtro)
+		{
+			IEnumerable<AtendimentoConsulta> atendimentos = new List<AtendimentoConsulta>();
+			if (filtro == null || filtro.Length == 0)
+			{
+				atendimentos = from item in _context.Atendimentos
+				.Include(atend => atend.Servico)
+				.Include(atend => atend.Cliente)
+				.Include(atend => atend.Funcionario)
+				.OrderBy(o => o.Servico)
+				.ToList()
+				select new AtendimentoConsulta
+				{
+					Servico = item.Servico.Descricao,
+					Cliente = item.Cliente.Nome,
+					Funcionario = item.Funcionario.Nome,
+					DataHora = item.DataHora.ToShortDateString()
+				};
+			}
+			else
+			{
+				atendimentos = from item in _context.Atendimentos
+				.Include(atend => atend.Servico)
+				.Include(atend => atend.Cliente)
+				.Include(atend => atend.Funcionario)
+				.OrderBy(atend => atend.Funcionario)
+				.Where(atend => atend.Servico.Descricao.Contains(filtro))
+				.ToList()
+				select new AtendimentoConsulta
+				{
+					Servico = item.Servico.Descricao,
+					Cliente = item.Cliente.Nome,
+					Funcionario = item.Funcionario.Nome,
+					DataHora = item.DataHora.ToShortDateString()
+				};
+			}
+			return View(atendimentos);
+		}
+
 		public IActionResult FiltrarPorData(DateTime data)
 		{
 			
