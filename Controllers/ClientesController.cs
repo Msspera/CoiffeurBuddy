@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CoiffeurBuddy.Models;
+using CoiffeurBuddy.Models.Consulta;
+using Microsoft.CodeAnalysis.Elfie.Serialization;
 
 namespace CoiffeurBuddy.Controllers
 {
@@ -22,6 +24,41 @@ namespace CoiffeurBuddy.Controllers
 		{
 			return View();
 		}
+
+		public IActionResult Relatorio(int? id)
+		{
+			if (id == null)
+			{
+				return NotFound();
+			}
+
+			var cliente = _context.Clientes.FirstOrDefault(m => m.Id == id);
+
+			if (cliente == null)
+			{
+				return NotFound();
+			}
+			else
+			{
+				IEnumerable<Atendimento> atendimentos = new List<Atendimento>();
+				atendimentos = from item in _context.Atendimentos
+				.Include(atend => atend.Servico)
+				.Include(atend => atend.Cliente)
+				.Include(atend => atend.Funcionario)
+				.OrderBy(atend => atend.DataHora)
+				.Where(atend => atend.Cliente.Id == id)
+				.ToList()
+				select new Atendimento
+				{
+					Servico = item.Servico,
+					Cliente = item.Cliente,
+					Funcionario = item.Funcionario,
+					DataHora = item.DataHora
+				};
+				return View(atendimentos);
+			}
+		}
+
 		public IActionResult Clientes(string buscacli)
 		{
 			IEnumerable<Cliente> clientes = new List<Cliente>();

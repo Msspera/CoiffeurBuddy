@@ -1,0 +1,62 @@
+﻿@model IEnumerable<CoiffeurBuddy.Models.Atendimento>
+
+@{
+    ViewData["Title"] = "Relatorio";
+}
+
+<h1>Relatório do Cliente:<br />
+	@Html.DisplayFor(model => model.First().Cliente.Nome)
+</h1>
+
+@{float totalGasto = 0;}
+@foreach (var item in Model) {totalGasto += item.Servico.Valor;}
+
+<h2>Total Gasto: R$@totalGasto</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Servico)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Funcionario)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataHora)
+            </th>
+			<th>
+				Valor
+			</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+
+@foreach (var item in Model) {
+		totalGasto += item.Servico.Valor;
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Servico.Descricao)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Funcionario.Nome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataHora)
+            </td>
+			<td>
+				R$@Html.DisplayFor(modelItem => item.Servico.Valor)
+			</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
