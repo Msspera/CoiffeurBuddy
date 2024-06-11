@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CoiffeurBuddy.Models;
 using CoiffeurBuddy.Models.Consulta;
+using Microsoft.CodeAnalysis.Elfie.Serialization;
 
 namespace CoiffeurBuddy.Controllers
 {
@@ -18,6 +19,12 @@ namespace CoiffeurBuddy.Controllers
         {
             _context = context;
         }
+
+		public IActionResult Filtros()
+		{
+			return View();
+		}
+
 
 		public IActionResult FiltrarPorFuncionario(string filtro)
 		{
@@ -56,6 +63,47 @@ namespace CoiffeurBuddy.Controllers
 				};
 			}
 			return View(atendimentos);
+		}
+
+		public IActionResult FiltrarPorData(DateTime data)
+		{
+			
+			IEnumerable<AtendimentoConsulta> atendimentos = new List<AtendimentoConsulta>();
+
+			if (data.Equals(new DateTime(1,1,1)))
+			{
+				atendimentos = from item in _context.Atendimentos
+				.Include(atend => atend.Servico)
+				.Include(atend => atend.Cliente)
+				.Include(atend => atend.Funcionario)
+				.ToList()
+				select new AtendimentoConsulta
+				{
+					Servico = item.Servico.Descricao,
+					Cliente = item.Cliente.Nome,
+					Funcionario = item.Funcionario.Nome,
+					DataHora = item.DataHora.ToShortDateString()
+				};
+			}
+			else
+			{
+				atendimentos = from item in _context.Atendimentos
+				.Include(atend => atend.Servico)
+				.Include(atend => atend.Cliente)
+				.Include(atend => atend.Funcionario)
+				.OrderBy(atend => atend.Funcionario)
+				.Where(atend => atend.DataHora.Date.Equals(data))
+				.ToList()
+				select new AtendimentoConsulta
+				{
+					Servico = item.Servico.Descricao,
+					Cliente = item.Cliente.Nome,
+					Funcionario = item.Funcionario.Nome,
+					DataHora = item.DataHora.ToShortDateString()
+				};
+			}
+
+			return View(atendimentos); 
 		}
 
         // GET: Atendimentos
