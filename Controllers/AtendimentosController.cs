@@ -106,6 +106,46 @@ namespace CoiffeurBuddy.Controllers
 			return View(atendimentos); 
 		}
 
+		public IActionResult FiltrarPorHora(int? hora)
+		{
+			IEnumerable<AtendimentoConsulta> atendimentos = new List<AtendimentoConsulta>();
+
+			if (hora == null)
+			{
+				atendimentos = from item in _context.Atendimentos
+				.Include(atend => atend.Servico)
+				.Include(atend => atend.Cliente)
+				.Include(atend => atend.Funcionario)
+				.ToList()
+				select new AtendimentoConsulta
+				{
+					Servico = item.Servico.Descricao,
+					Cliente = item.Cliente.Nome,
+					Funcionario = item.Funcionario.Nome,
+					DataHora = item.DataHora.ToString()
+				};
+			}
+			else
+			{
+				atendimentos = from item in _context.Atendimentos
+				.Include(atend => atend.Servico)
+				.Include(atend => atend.Cliente)
+				.Include(atend => atend.Funcionario)
+				.OrderBy(atend => atend.Funcionario)
+				.Where(atend => atend.DataHora.Hour.Equals(hora))
+				.ToList()
+				select new AtendimentoConsulta
+				{
+					Servico = item.Servico.Descricao,
+					Cliente = item.Cliente.Nome,
+					Funcionario = item.Funcionario.Nome,
+					DataHora = item.DataHora.ToString()
+				};
+			}
+
+			return View(atendimentos);
+
+		}
         // GET: Atendimentos
         public async Task<IActionResult> Index()
         {
