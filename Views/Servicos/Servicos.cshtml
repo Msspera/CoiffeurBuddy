@@ -1,18 +1,18 @@
 ﻿@model IEnumerable<CoiffeurBuddy.Models.Servico>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Servicos";
 }
 
-<h1>Index</h1>
+<h1>Servicos</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
-    <a asp-action="FiltrarServicos">Create New</a>
+    <a asp-action="Index">Voltar para pagina sem filtro</a>
 </p>
 <table class="table">
     <thead>
         <tr>
+            
             <th>
                 @Html.DisplayNameFor(model => model.Descricao)
             </th>
@@ -25,17 +25,14 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            
             <td>
                 @Html.DisplayFor(modelItem => item.Descricao)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Valor)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
+            
         </tr>
 }
     </tbody>

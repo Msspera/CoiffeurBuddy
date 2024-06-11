@@ -18,6 +18,42 @@ namespace CoiffeurBuddy.Controllers
             _context = context;
         }
 
+        public IActionResult FiltrarProdutos()
+        {
+            return View();
+        }
+        public IActionResult Produto(string buscaprod)
+        {
+            IEnumerable<Produto> produto = new List<Produto>();
+            if (buscaprod == null)
+            {
+                produto = from item in _context.Produtos.ToList()
+                               select new Produto
+                               {
+                                   Descricao = item.Descricao,
+                                   Valor = item.Valor,
+                                   Estoque = item.Estoque,
+
+                               };
+            }
+            else
+            {
+                produto = from item in _context.Produtos.
+                                           Where(o => o.Descricao.Contains(buscaprod)).
+                                           ToList()
+                               select new Produto
+                               {
+                                   Descricao = item.Descricao,
+                                   Valor = item.Valor,
+                                   Estoque = item.Estoque,
+
+                               };
+            }
+
+
+            return View(produto);
+        }
+
         // GET: Produtos
         public async Task<IActionResult> Index()
         {

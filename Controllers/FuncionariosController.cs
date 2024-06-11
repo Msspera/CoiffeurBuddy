@@ -18,6 +18,46 @@ namespace CoiffeurBuddy.Controllers
             _context = context;
         }
 
+        public IActionResult FiltrarFuncionario()
+        {
+            return View();
+        }
+        public IActionResult Funcionarios(string buscafunc)
+        {
+            IEnumerable<Funcionario> funcionarios = new List<Funcionario>();
+            if (buscafunc == null)
+            {
+                funcionarios = from item in _context.Funcionarios.ToList()
+                           select new Funcionario
+                           {
+                               Nome = item.Nome,
+                               Funcao = item.Funcao,
+                               Celular = item.Celular,
+                               Email = item.Email,
+                               Endereco = item.Endereco,
+                               
+                           };
+            }
+            else
+            {
+                funcionarios = from item in _context.Funcionarios.
+                                           Where(o => o.Nome.Contains(buscafunc)).
+                                           ToList()
+                           select new Funcionario
+                           {
+                               Nome = item.Nome,
+                               Funcao = item.Funcao,
+                               Celular = item.Celular,
+                               Email = item.Email,
+                               Endereco = item.Endereco,
+                               
+                           };
+            }
+
+
+            return View(funcionarios);
+        }
+
         // GET: Funcionarios
         public async Task<IActionResult> Index()
         {
