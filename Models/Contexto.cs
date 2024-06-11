@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using CoiffeurBuddy.Models;
+using CoiffeurBuddy.Models.Consulta;
 
 namespace CoiffeurBuddy.Models
 {
@@ -35,6 +36,7 @@ namespace CoiffeurBuddy.Models
 				.WithMany(p => p.ComandaProdutos)
 				.HasForeignKey(cp => cp.ProdutoId);
 		}
+	    public DbSet<CoiffeurBuddy.Models.Consulta.AtendimentoConsulta> AtendimentoConsulta { get; set; }
 
 	}
 }

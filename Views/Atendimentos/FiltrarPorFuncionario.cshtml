@@ -1,27 +1,13 @@
-﻿@model IEnumerable<CoiffeurBuddy.Models.Atendimento>
+﻿@model IEnumerable<CoiffeurBuddy.Models.Consulta.AtendimentoConsulta>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Filtragem por Funcionário";
 }
 
-<h1>Index</h1>
-
-<div class="row">
-	<div class="col-md-4">
-		<form asp-action="FiltrarPorFuncionario">
-			<div class="form-group">
-				<label class="col-form-label">Filtrar Atendimentos por Nome de Funcionário</label>
-				<input type="text" class="form-control" name="filtro">
-			</div>
-			<div class="form-group">
-				<input type="submit" value="Filtrar" class="btn btn-primary">
-			</div>
-		</form>
-	</div>
-</div>
+<h1>Filtragem por Funcionário</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+	<a asp-action="Index">Remover Filtro</a>
 </p>
 <table class="table">
     <thead>
@@ -45,13 +31,13 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Servico.Descricao)
+                @Html.DisplayFor(modelItem => item.Servico)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Cliente.Nome)
+                @Html.DisplayFor(modelItem => item.Cliente)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Funcionario.Nome)
+                @Html.DisplayFor(modelItem => item.Funcionario)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DataHora)
