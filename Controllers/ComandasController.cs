@@ -20,40 +20,6 @@ namespace CoiffeurBuddy.Controllers
             _context = context;
         }
 
-        public IActionResult FiltrarComanda()
-        {
-            return View();
-        }
-        public IActionResult Comandas(string buscacomd)
-        {
-            IEnumerable<Comanda> comanda = new List<Comanda>();
-            if (buscacomd == null)
-            {
-                comanda = from item in _context.Comandas.ToList()
-                               select new Comanda
-                               {
-                                   ValorTotal = item.ValorTotal,
-                                   MetodoPagamento = item.MetodoPagamento,
-                                   
-                               };
-            }
-            else
-            {
-                comanda = from item in _context.Comandas.
-                                           Where(c => c.Atendimento.Contains(buscacomd)).
-                                           ToList()
-                               select new Comanda
-                               {
-                                   ValorTotal = item.ValorTotal,
-                                   MetodoPagamento = item.MetodoPagamento,
-
-                               };
-            }
-
-
-            return View(comanda);
-        }
-
         // GET: Comandas
         public async Task<IActionResult> Index()
         {
