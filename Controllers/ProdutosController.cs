@@ -18,14 +18,10 @@ namespace CoiffeurBuddy.Controllers
             _context = context;
         }
 
-        public IActionResult FiltrarProdutos()
-        {
-            return View();
-        }
-        public IActionResult Produto(string buscaprod)
+        public IActionResult FiltrarPorDescricao(string filtro)
         {
             IEnumerable<Produto> produto = new List<Produto>();
-            if (buscaprod == null)
+            if (filtro == null)
             {
                 produto = from item in _context.Produtos.ToList()
                                select new Produto
@@ -39,7 +35,7 @@ namespace CoiffeurBuddy.Controllers
             else
             {
                 produto = from item in _context.Produtos.
-                                           Where(o => o.Descricao.Contains(buscaprod)).
+                                           Where(o => o.Descricao.Contains(filtro)).
                                            ToList()
                                select new Produto
                                {
@@ -49,7 +45,6 @@ namespace CoiffeurBuddy.Controllers
 
                                };
             }
-
 
             return View(produto);
         }
